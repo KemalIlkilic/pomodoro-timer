@@ -42,6 +42,10 @@ function addTask() {
   // This is a practical example of how closures allow functions to
   // retain access to variables from their parent function's scope,
   //even after that parent function has finished executing.
+  /*
+   !!!! A closure is a function having access to the parent scope, even after the parent function has closed.
+  A closure is created when we define a function, not when a function is executed. !!!
+  */
   text.addEventListener("change", () => {
     tasks[taskNum] = text.value;
   });
