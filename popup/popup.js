@@ -1,17 +1,23 @@
-const tasks = [];
-
+let tasks = [];
 const addTaskBtn = document.getElementById("add-task-btn");
 addTaskBtn.addEventListener("click", () => addTask());
 
-function addTask() {
-  const taskNum = tasks.length;
-  tasks.push("");
+chrome.storage.sync.get(["tasks"], (res) => {
+  tasks = res.tasks ? res.tasks : [];
+  renderTasks();
+});
 
+function saveTasks() {
+  chrome.storage.sync.set({ tasks: tasks });
+}
+
+function renderTask(taskNum) {
   const taskRow = document.createElement("div");
 
   const text = document.createElement("input");
   text.type = "text";
   text.placeholder = "Enter a task...";
+  text.value = tasks[taskNum];
   /* text.addEventListener("change", () => {
     tasks[taskNum] = text.value;
   });
@@ -25,38 +31,40 @@ function addTask() {
   where inner functions have access to the variables of outer functions
   even after the outer function has finished executing.
   */
-  // !!! The key here is that the taskNum is captured in the closure created by the arrow function
-  // () => { tasks[taskNum] = text.value; }. This means that even as the addTask function is called multiple times
-  // and the taskNum variable changes,
-  // each event listener remembers the taskNum value from when it was created.!!!
-  /*
-  Now, let's say you add multiple tasks. Each time you add a task, a new taskNum is created,
-  and a new event listener is added to the new task's text input field.
-  Each event listener "remembers" the taskNum from when it was created,
-  so it knows which task to update in the tasks array.
-  */
-  // Memory of taskNum and text: Each time addTask runs, a new closure is created for the change event listener.
-  // This closure remembers the taskNum and text from that specific execution of addTask
-  // When you change the text in one of the input fields, the corresponding event listener
-  // knows exactly which task (tasks[taskNum]) to update because it "remembers" its taskNum.
-  // This is a practical example of how closures allow functions to
-  // retain access to variables from their parent function's scope,
-  //even after that parent function has finished executing.
-  /*
-   !!!! A closure is a function having access to the parent scope, even after the parent function has closed.
-  A closure is created when we define a function, not when a function is executed. !!!
-  */
   text.addEventListener("change", () => {
     tasks[taskNum] = text.value;
+    saveTasks();
   });
-
   const deleteBtn = document.createElement("input");
   deleteBtn.type = "button";
   deleteBtn.value = "X";
-
+  deleteBtn.addEventListener("click", () => {
+    deleteTask(taskNum);
+  });
   taskRow.appendChild(text);
   taskRow.appendChild(deleteBtn);
 
   const taskContainer = document.getElementById("task-container");
   taskContainer.appendChild(taskRow);
+}
+
+function addTask() {
+  const taskNum = tasks.length;
+  tasks.push("");
+  renderTask(taskNum);
+  saveTasks();
+}
+
+function deleteTask(taskNum) {
+  tasks.splice(taskNum, 1);
+  renderTasks();
+  saveTasks();
+}
+
+function renderTasks() {
+  const taskContainer = document.getElementById("task-container");
+  taskContainer.textContent = "";
+  tasks.forEach((taskText, taskNum) => {
+    renderTask(taskNum);
+  });
 }
