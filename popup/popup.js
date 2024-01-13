@@ -1,9 +1,9 @@
 let tasks = [];
 
 function updateTime() {
-  chrome.storage.local.get(["timer"], (res) => {
+  chrome.storage.local.get(["timer", "timeOption"], (res) => {
     const time = document.getElementById("time");
-    const minutes = 25 - Math.ceil(res.timer / 60);
+    const minutes = res.timeOption - Math.ceil(res.timer / 60);
     const seconds = (60 - (res.timer % 60)) % 60;
     time.textContent = `${minutes < 10 ? "0" : ""}${minutes}:${
       seconds < 10 ? "0" : ""
