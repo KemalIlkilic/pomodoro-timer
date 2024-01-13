@@ -45,3 +45,23 @@ body {
   align-items: center;
   padding: 20px;
 }
+
+.task-input {
+  outline: none;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  margin: 5px;
+  width: 250px;
+}
+
+.task-delete {
+  height: 25px;
+  width: 25px;
+  outline: none;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: indianred;
+  font-weight: 900;
+}
